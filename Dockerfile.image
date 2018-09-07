@@ -1,0 +1,10 @@
+FROM busybox:musl
+
+COPY [ \
+  "./viryaos-xen.tar.gz", \
+  "/home/builder/viryaos-xen.tar.gz" \
+]
+
+# NOTE: DO NOT ADD ANY MORE LAYERS
+#
+# Adding additional can increase images size unnecessarily. So, don't do it!

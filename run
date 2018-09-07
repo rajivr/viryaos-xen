@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e -x
+
+OUT_DIR=/tmp/xen
+XEN_VERSION=4.11.0
+OUT_FILE=viryaos-xen.tar.gz
+
+curl -fsSLO https://downloads.xenproject.org/release/xen/$XEN_VERSION/xen-$XEN_VERSION.tar.gz
+tar xvzf xen-$XEN_VERSION.tar.gz
+cd xen-$XEN_VERSION
+patch -p1 < /root/src/xen-patch
+./configure --prefix=/usr --with-system-qemu=/usr/lib/xen/bin/qemu-system-i386 --disable-stubdom --disable-qemu-traditional --disable-rombios
+make -j "$(getconf _NPROCESSORS_ONLN)"
+mkdir -p DESTDIR=$OUT_DIR
+make DESTDIR=$OUT_DIR install
+cp /root/src/xenstored.initd $OUT_DIR/etc/init.d/xenstored
+chmod +x $OUT_DIR/etc/init.d/xenstored
+cp /root/src/xenconsoled.initd $OUT_DIR/etc/init.d/xenconsoled
+chmod +x $OUT_DIR/etc/init.d/xenconsoled
+#cp /root/src/xenqemu.initd $OUT_DIR/etc/init.d/xenqemu
+cd $OUT_DIR
+tar cvzf $OUT_FILE *
+mv viryaos-xen.tar.gz ..

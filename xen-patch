@@ -1,0 +1,39 @@
+diff --git a/tools/Makefile b/tools/Makefile
+index 67977ad..1f5c945 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -15,7 +15,7 @@ SUBDIRS-y += examples
+ SUBDIRS-y += hotplug
+ SUBDIRS-y += xentrace
+ SUBDIRS-$(CONFIG_XCUTILS) += xcutils
+-SUBDIRS-$(CONFIG_X86) += firmware
++#SUBDIRS-$(CONFIG_X86) += firmware
+ SUBDIRS-y += console
+ SUBDIRS-y += xenmon
+ SUBDIRS-y += xenstat
+diff --git a/tools/libxc/xc_sr_restore.c b/tools/libxc/xc_sr_restore.c
+index ea7b033..3eae908 100644
+--- a/tools/libxc/xc_sr_restore.c
++++ b/tools/libxc/xc_sr_restore.c
+@@ -397,7 +397,7 @@ static int handle_page_data(struct xc_sr_context *ctx, struct xc_sr_record *rec)
+                          (PAGE_SIZE * pages_of_data)) )
+     {
+         ERROR("PAGE_DATA record wrong size: length %u, expected "
+-              "%zu + %zu + %lu", rec->length, sizeof(*pages),
++              "%zu + %zu + %u", rec->length, sizeof(*pages),
+               (sizeof(uint64_t) * pages->count), (PAGE_SIZE * pages_of_data));
+         goto err;
+     }
+diff --git a/tools/xenpaging/xenpaging.c b/tools/xenpaging/xenpaging.c
+index d0571ca..7ad86e3 100644
+--- a/tools/xenpaging/xenpaging.c
++++ b/tools/xenpaging/xenpaging.c
+@@ -180,7 +180,7 @@ static int xenpaging_get_tot_pages(struct xenpaging *paging)
+ 
+ static void *init_page(void)
+ {
+-    void *buffer;
++    void *buffer = NULL;
+ 
+     /* Allocated page memory */
+     errno = posix_memalign(&buffer, PAGE_SIZE, PAGE_SIZE);
