@@ -37,3 +37,30 @@ index d0571ca..7ad86e3 100644
  
      /* Allocated page memory */
      errno = posix_memalign(&buffer, PAGE_SIZE, PAGE_SIZE);
+diff --git a/xen/arch/arm/cpuerrata.c b/xen/arch/arm/cpuerrata.c
+index 1baa206..e693ac6 100644
+--- a/xen/arch/arm/cpuerrata.c
++++ b/xen/arch/arm/cpuerrata.c
+@@ -152,7 +152,6 @@ extern char __smccc_workaround_1_smc_start[], __smccc_workaround_1_smc_end[];
+ static int enable_smccc_arch_workaround_1(void *data)
+ {
+     struct arm_smccc_res res;
+-    static bool warned = false;
+     const struct arm_cpu_capabilities *entry = data;
+ 
+     /*
+@@ -177,14 +176,6 @@ static int enable_smccc_arch_workaround_1(void *data)
+                                      "call ARM_SMCCC_ARCH_WORKAROUND_1");
+ 
+ warn:
+-    if ( !warned )
+-    {
+-        ASSERT(system_state < SYS_STATE_active);
+-        warning_add("No support for ARM_SMCCC_ARCH_WORKAROUND_1.\n"
+-                    "Please update your firmware.\n");
+-        warned = false;
+-    }
+-
+     return 0;
+ }
+ 
