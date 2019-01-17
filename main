@@ -5,7 +5,7 @@ set -e -x
 OUT_DIR=/tmp/xen
 XEN_VERSION=4.11.0
 OUT_FILE=viryaos-xen.tar.gz
-SOURCE_DIR=/root/src
+SOURCE_DIR=/home/builder/src/viryaos-xen-aarch64
 
 curl -fsSLO https://downloads.xenproject.org/release/xen/$XEN_VERSION/xen-$XEN_VERSION.tar.gz
 tar xvzf xen-$XEN_VERSION.tar.gz
@@ -40,4 +40,12 @@ mv $OUT_DIR/usr/bin/qemu-system-i386 $OUT_DIR/usr/lib/xen/bin/qemu-system-i386
 cp $SOURCE_DIR/xenqemu.initd $OUT_DIR/etc/init.d/xenqemu
 cd $OUT_DIR
 tar cvzf $OUT_FILE *
-mv viryaos-xen.tar.gz ..
+# mv viryaos-xen.tar.gz ..
+
+container_output="/home/builder/src/viryaos-xen-aarch64/output-viryaos-xen-aarch64"
+
+rm -rf $container_output
+
+mkdir $container_output
+
+cp viryaos-xen.tar.gz $container_output
