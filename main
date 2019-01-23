@@ -2,50 +2,58 @@
 
 set -e -x
 
-OUT_DIR=/tmp/xen
-XEN_VERSION=4.11.0
-OUT_FILE=viryaos-xen.tar.gz
-SOURCE_DIR=/home/builder/src/viryaos-xen-aarch64
+out_dir=/tmp/xen
+xen_version=4.11.0
+out_file=viryaos-xen.tar.gz
+source_dir=/home/builder/src/viryaos-xen-aarch64
 
-curl -fsSLO https://downloads.xenproject.org/release/xen/$XEN_VERSION/xen-$XEN_VERSION.tar.gz
-tar xvzf xen-$XEN_VERSION.tar.gz
-cd xen-$XEN_VERSION
-patch -p1 < /$SOURCE_DIR/xen-patch
-./configure --prefix=/usr --with-system-qemu=/usr/lib/xen/bin/qemu-system-i386 --disable-stubdom --disable-qemu-traditional --disable-rombios
+curl -fsSLO https://downloads.xenproject.org/release/xen/$xen_version/xen-$xen_version.tar.gz
+tar xvzf xen-$xen_version.tar.gz
+cd xen-$xen_version
+patch -p1 < /$source_dir/xen-patch
+./configure --prefix=/usr                                \
+    --with-system-qemu=/usr/lib/xen/bin/qemu-system-i386 \
+    --disable-stubdom                                    \
+    --disable-qemu-traditional                           \
+    --disable-rombios
 make -j "$(getconf _NPROCESSORS_ONLN)"
-mkdir -p DESTDIR=$OUT_DIR
-make DESTDIR=$OUT_DIR install
-cp $SOURCE_DIR/xenstored.initd $OUT_DIR/etc/init.d/xenstored
-chmod +x $OUT_DIR/etc/init.d/xenstored
-cp $SOURCE_DIR/xenconsoled.initd $OUT_DIR/etc/init.d/xenconsoled
-chmod +x $OUT_DIR/etc/init.d/xenconsoled
+mkdir -p DESTDIR=$out_dir
+make DESTDIR=$out_dir install
+cp $source_dir/xenstored.initd $out_dir/etc/init.d/xenstored
+chmod +x $out_dir/etc/init.d/xenstored
+cp $source_dir/xenconsoled.initd $out_dir/etc/init.d/xenconsoled
+chmod +x $out_dir/etc/init.d/xenconsoled
 cd ..
 
-QEMU_VERSION=2.11.2
-curl -fsSLO https://download.qemu.org/qemu-$QEMU_VERSION.tar.xz
-tar xvJf qemu-$QEMU_VERSION.tar.xz
-cd qemu-$QEMU_VERSION
-patch -p1 < $SOURCE_DIR/qemu-patch
-export PKG_CONFIG_PATH=$SOURCE_DIR/xen/tools/pkg-config
-export INST_DIR=$OUT_DIR
-./configure --prefix=/usr --enable-xen --target-list=i386-softmmu \
-		--extra-cflags="-I$INST_DIR/usr/include" \
-        --extra-ldflags="-L$INST_DIR/usr/lib -Wl,-rpath-link=$INST_DIR/usr/lib \
-                         -L$INST_DIR/usr/lib64 -Wl,-rpath-link=$INST_DIR/usr/lib64" \
-        --disable-kvm --enable-virtfs --disable-werror
+qemu_version=2.11.2
+curl -fsSLO https://download.qemu.org/qemu-$qemu_version.tar.xz
+tar xvJf qemu-$qemu_version.tar.xz
+cd qemu-$qemu_version
+patch -p1 < $source_dir/qemu-patch
+export PKG_CONFIG_PATH=$source_dir/xen/tools/pkg-config
+export INST_DIR=$out_dir
+./configure --prefix=/usr                                 \
+    --enable-xen                                          \
+    --target-list=i386-softmmu                            \
+	--extra-cflags="-I$INST_DIR/usr/include"              \
+    --extra-ldflags="-L$INST_DIR/usr/lib                  \
+                     -Wl,-rpath-link=$INST_DIR/usr/lib    \
+                     -L$INST_DIR/usr/lib64                \
+                     -Wl,-rpath-link=$INST_DIR/usr/lib64" \
+    --disable-kvm                                         \
+    --enable-virtfs                                       \
+    --disable-werror
 make -j "$(getconf _NPROCESSORS_ONLN)"
-make DESTDIR=$OUT_DIR install
-mv $OUT_DIR/usr/bin/qemu-system-i386 $OUT_DIR/usr/lib/xen/bin/qemu-system-i386
+make DESTDIR=$out_dir install
+mv $out_dir/usr/bin/qemu-system-i386 $out_dir/usr/lib/xen/bin/qemu-system-i386
 
-cp $SOURCE_DIR/xenqemu.initd $OUT_DIR/etc/init.d/xenqemu
-cd $OUT_DIR
-tar cvzf $OUT_FILE *
+cp $source_dir/xenqemu.initd $out_dir/etc/init.d/xenqemu
+cd $out_dir
+tar cvzf $out_file *
 # mv viryaos-xen.tar.gz ..
 
 container_output="/home/builder/src/viryaos-xen-aarch64/output-viryaos-xen-aarch64"
-
 rm -rf $container_output
-
 mkdir $container_output
 
 cp viryaos-xen.tar.gz $container_output
