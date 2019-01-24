@@ -1,0 +1,6 @@
+FROM busybox:musl
+
+COPY [ \
+  "./output-viryaos-xen-tools-aarch64/*", \
+  "/home/builder/output-viryaos-xen-tools-aarch64/" \
+]
