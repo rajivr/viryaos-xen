@@ -4,7 +4,8 @@ set -e -x
 
 out_dir=/tmp/xen
 xen_version=4.11.0
-out_file=viryaos-xen.tar.gz
+out_file_tools=viryaos-xen-tools.tar.gz
+out_file_boot=viryaos-xen-boot.tar.gz
 source_dir=/home/builder/src/viryaos-xen-aarch64
 
 curl -fsSLO https://downloads.xenproject.org/release/xen/$xen_version/xen-$xen_version.tar.gz
@@ -49,11 +50,17 @@ mv $out_dir/usr/bin/qemu-system-i386 $out_dir/usr/lib/xen/bin/qemu-system-i386
 
 cp $source_dir/xenqemu.initd $out_dir/etc/init.d/xenqemu
 cd $out_dir
-tar cvzf $out_file *
-# mv viryaos-xen.tar.gz ..
 
-container_output="/home/builder/src/viryaos-xen-aarch64/output-viryaos-xen-aarch64"
-rm -rf $container_output
-mkdir $container_output
+tar cvzf $out_file_tools etc/ usr/ var/
+tar cvzf $out_file_boot boot/
 
-cp viryaos-xen.tar.gz $container_output
+container_output_tools="/home/builder/src/viryaos-xen-aarch64/output-viryaos-xen-tools-aarch64"
+rm -rf $container_output_tools
+mkdir $container_output_tools
+
+container_output_boot="/home/builder/src/viryaos-xen-aarch64/output-viryaos-xen-boot-aarch64"
+rm -rf $container_output_boot
+mkdir $container_output_boot
+
+cp $out_file_tools $container_output_tools
+cp $out_file_boot $container_output_boot
