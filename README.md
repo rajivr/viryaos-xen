@@ -17,10 +17,20 @@ $ docker run --rm -ti -v $(pwd):/home/builder/src \
     viryaos-xen-aarch64 /vos_run
 ```
 
-## `Dockerfile.package`
+## `Dockerfile.package_tools`
 
 ```
 $ cd viryaos-xen-aarch64
 
-$ docker build --force-rm --squash --file Dockerfile.package -t viryaos-xen-aarch64-package .
+$ docker build --force-rm --squash --file Dockerfile.package_tools \
+    -t viryaos-xen-aarch64-package-tools .
+```
+
+## `Dockerfile.package_boot`
+
+```
+$ cd viryaos-xen-aarch64
+
+$ docker build --force-rm --squash --file Dockerfile.package_boot \
+    -t viryaos-xen-aarch64-package-boot .
 ```
