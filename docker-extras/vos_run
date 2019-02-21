@@ -2,4 +2,4 @@
 
 set -e -x
 
-/home/builder/src/viryaos-xen-aarch64/main
+/home/builder/src/viryaos-xen/main
