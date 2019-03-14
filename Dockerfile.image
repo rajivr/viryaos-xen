@@ -1,13 +1,14 @@
+FROM viryaos/sdk-qemu-user-aarch64:v3.7-45f9eeb-x86_64 AS sdk-qemu-user-aarch64
+
 FROM arm64v8/alpine:3.7
+
+COPY --from=sdk-qemu-user-aarch64 /home/builder/sdk-qemu-user-aarch64/qemu-aarch64 /usr/bin/qemu-aarch64
+
+COPY --from=sdk-qemu-user-aarch64 /home/builder/sdk-qemu-user-aarch64/qemu-aarch64 /usr/bin/qemu-aarch64-static
 
 COPY [ \
   "./docker-extras/*", \
   "/tmp/docker-build/" \
-]
-
-COPY [ \
-  "qemu-aarch64", \
-  "/usr/bin/qemu-aarch64" \
 ]
 
 RUN \
